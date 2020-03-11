@@ -137,7 +137,7 @@ class DirectCSVExport extends PluginBase {
 								'type' => 'text',
 								'label' => 'The API Key',
 								'help' => 'Treat this string like a password',
-								'current' => $this->get('sAPIKey', 'Survey', $oEvent->get('survey'),$this->get('sAPIKey',null,null,Yii::app()->securityManager->generateRandomString(64))),
+								'current' => $this->get('sAPIKey', 'Survey', $oEvent->get('survey'),$this->get('sAPIKey',null,null,str_replace(array('~', '_'), array('a', 'z'), Yii::app()->securityManager->generateRandomString(64)))),
 						),
 							'sInfo' => array (
 								'type' => 'info',
