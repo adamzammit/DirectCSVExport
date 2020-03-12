@@ -95,6 +95,7 @@ class DirectCSVExport extends PluginBase {
 			$oFormattingOptions->responseCompletionState = 'all';      
 			$oFormattingOptions->headingFormat = 'full';                     
 			$oFormattingOptions->answerFormat = 'long';                     
+			$oFormattingOptions->csvFieldSeparator = ',';
 			$oFormattingOptions->output = 'display';
 		        $oExport = new ExportSurveyResultsService();                            
 		        $sTempFile = $oExport->exportResponses($iSurveyId, $survey->language, 'csv', $oFormattingOptions, '');

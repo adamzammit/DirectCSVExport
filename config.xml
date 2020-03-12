@@ -8,7 +8,7 @@
         <author>Adam Zammit</author>
         <authorUrl>https://acspri.org.au/</authorUrl>
         <supportUrl>https://acspri.org.au/</supportUrl>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <license>GNU General Public License v3.0</license>
         <description><![CDATA[Provide a URL with secret key for downloading CSV data in a format ready for reporting tools]]></description>
     </metadata>
