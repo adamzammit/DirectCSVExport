@@ -15,8 +15,8 @@ If you discover any security related issues, please email adam@acspri.org.au ins
 
 ## Contributing
 
-PR's are welcome, but if it is for a new feature/big change please create an issue first to check if it will be accepted.
+PR's are welcome!
 
 ## Usage
 
-You are free to use/change/fork this code for your own products, and I would be happy to hear how and what you are using it for!
+You are free to use/change/fork this code for your own products (licence is GPLv3), and I would be happy to hear how and what you are using it for!
