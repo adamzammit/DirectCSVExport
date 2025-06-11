@@ -90,11 +90,14 @@ class DirectCSVExport extends PluginBase {
                 $oFormattingOptions = new FormattingOptions();
                 $oFormattingOptions->responseMinRecord = 1;
                 $oFormattingOptions->responseMaxRecord = $maxId;
-                $aFields = array_keys(createFieldMap($survey, 'full', true, false, $survey->language));
-                $aTokenFields = array('tid','participant_id','firstname','lastname','email','emailstatus','language','blacklisted','sent','remindersent','remindercount','completed','usesleft','validfrom','validuntil','mpid');
-                foreach($survey->tokenAttributes as $key => $value) {
-                    $aTokenFields[] = $key;
-                }
+		$aFields = array_keys(createFieldMap($survey, 'full', true, false, $survey->language));
+		$aTokenFields = [];
+		if ($survey->hasTokensTable) {
+			$aTokenFields = array('tid','participant_id','firstname','lastname','email','emailstatus','language','blacklisted','sent','remindersent','remindercount','completed','usesleft','validfrom','validuntil','mpid');
+	                foreach($survey->tokenAttributes as $key => $value) {
+	                    $aTokenFields[] = $key;
+	                }
+		}
                 $oFormattingOptions->selectedColumns = array_merge($aFields,$aTokenFields);
                 $oFormattingOptions->responseCompletionState = 'all';
                 $oFormattingOptions->headingFormat = 'full';
