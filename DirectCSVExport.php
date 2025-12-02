@@ -101,7 +101,7 @@ class DirectCSVExport extends PluginBase {
 
         if (!empty($sAPIKey) && !(($this->get('bUse','Survey',$iSurveyId)==0)||(($this->get('bUse','Survey',$iSurveyId)==2) && ($this->get('bUse',null,null,$this->settings['bUse'])==0)))) {
             //if enabled for this survey
-            if ($sAPIKey == $this->get ( 'sAPIKey', 'Survey', $iSurveyId ) ) {//APIKey matches
+            if ($sAPIKey == $this->get ( 'sAPIKey', 'Survey', $iSurveyId ) || $sAPIKey == $this->get ( 'sAPIKeyNT', 'Survey', $iSurveyId )) {//APIKey matches
                 Yii::import('application.helpers.admin.export.FormattingOptions', true);
                 Yii::import('application.helpers.admin.exportresults_helper', true);
                 Yii::import('application.helpers.viewHelper', true);
@@ -117,7 +117,7 @@ class DirectCSVExport extends PluginBase {
                 $oFormattingOptions->responseMaxRecord = $maxId;
                 $aFields = array_keys(createFieldMap($survey, 'full', true, false, $survey->language));
                 $aTokenFields = [];
-                if ($survey->hasTokensTable) {
+                if ($survey->hasTokensTable && $sAPIKey == $this->get ( 'sAPIKey', 'Survey', $iSurveyId )) {
                     $aTokenFields = array('tid','participant_id','firstname','lastname','email','emailstatus','language','blacklisted','sent','remindersent','remindercount','completed','usesleft','validfrom','validuntil','mpid');
                     foreach($survey->tokenAttributes as $key => $value) {
                         $aTokenFields[] = $key;
@@ -149,9 +149,14 @@ class DirectCSVExport extends PluginBase {
     {
         $oEvent = $this->event;
         $apiKey = $this->get ( 'sAPIKey', 'Survey', $oEvent->get ( 'survey' ) );
+        $apiKeyNT = $this->get ( 'sAPIKeyNT', 'Survey', $oEvent->get ( 'survey' ) );
         $message = "Set an API key and save these settings before you can access the API";
+        $messageNT = "Set a no tokens data API key and save these settings before you can access the API";
         if (!empty($apiKey)) {
             $message =  Yii::app()->createAbsoluteUrl('plugins/direct', array('plugin' => "DirectCSVExport", 'surveyId' => $oEvent->get('survey'), "APIKey" =>$apiKey ));
+        }
+        if (!empty($apiKeyNT)) {
+            $messageNT =  Yii::app()->createAbsoluteUrl('plugins/direct', array('plugin' => "DirectCSVExport", 'surveyId' => $oEvent->get('survey'), "APIKey" =>$apiKeyNT ));
         }
         $aSets = array (
             'bUse' => array (
@@ -168,14 +173,25 @@ class DirectCSVExport extends PluginBase {
             ),
             'sAPIKey' => array (
                 'type' => 'text',
-                'label' => 'The API Key',
+                'label' => 'The API Key for accessing data WITH token data if available',
                 'help' => 'Treat this string like a password',
                 'current' => $this->get('sAPIKey', 'Survey', $oEvent->get('survey'),$this->get('sAPIKey',null,null,str_replace(array('~', '_'), array('a', 'z'), Yii::app()->securityManager->generateRandomString(64)))),
             ),
+            'sAPIKeyNT' => array (
+                'type' => 'text',
+                'label' => 'The API Key for accessing data without token data',
+                'help' => 'Treat this string like a password',
+                'current' => $this->get('sAPIKeyNT', 'Survey', $oEvent->get('survey'),$this->get('sAPIKeyNT',null,null,str_replace(array('~', '_'), array('a', 'z'), Yii::app()->securityManager->generateRandomString(64)))),
+            ),
             'sInfo' => array (
                 'type' => 'info',
-                'label' => 'The URL to access this API',
+                'label' => 'The URL to access this API WITH token data if available',
                 'help' =>  $message
+            ),
+            'sInfoNT' => array (
+                'type' => 'info',
+                'label' => 'The URL to access this API without token data',
+                'help' =>  $messageNT
             ),
 
         );
