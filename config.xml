@@ -4,11 +4,11 @@
         <name>DirectCSVExport</name>
         <type>plugin</type>
         <creationDate>2020-02-28</creationDate>
-        <lastUpdate>2025-06-11</lastUpdate>
+        <lastUpdate>2025-12-02</lastUpdate>
         <author>Adam Zammit</author>
         <authorUrl>https://acspri.org.au/</authorUrl>
         <supportUrl>https://acspri.org.au/</supportUrl>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <license>GNU General Public License v3.0</license>
         <description><![CDATA[Provide a URL with secret key for downloading CSV data directly from the survey in a format ready for reporting/analytic tools]]></description>
     </metadata>
