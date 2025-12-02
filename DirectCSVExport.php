@@ -27,6 +27,7 @@ class DirectCSVExport extends PluginBase {
     static protected $name = 'DirectCSVExport';
 
     public function init() {
+        $this->subscribe('beforeHasPermission');
         $this->subscribe('beforeSurveySettings');
         $this->subscribe('newSurveySettings');
         $this->subscribe('newDirectRequest'); //for call to API
@@ -49,6 +50,30 @@ class DirectCSVExport extends PluginBase {
     );
 
 
+    /**
+     * Ensure plugin has permission to access token records even when
+     * user is not logged in through the browser
+     *
+     */
+    public function beforeHasPermission()
+    {
+        $oEvent = $this->getEvent();
+        $sSurveyId = Yii::app()->request->getQuery('surveyId');
+        $sAPIKey = Yii::app()->request->getQuery('APIKey');
+
+        if (!empty($sSurveyId)) {
+            $iSurveyId = intval($sSurveyId);
+            $surveyidExists = Survey::model()->findByPk($iSurveyId);
+        }
+
+        if ($surveyidExists && !empty($sAPIKey) && !(($this->get('bUse','Survey',$iSurveyId)==0)||(($this->get('bUse','Survey',$iSurveyId)==2) && ($this->get('bUse',null,null,$this->settings['bUse'])==0)))) {
+            if ($sAPIKey == $this->get ( 'sAPIKey', 'Survey', $iSurveyId ) ) {//APIKey matches
+                if ($oEvent->get('iEntityID') == $iSurveyId && $oEvent->get('sEntityName') == 'survey' && $oEvent->get('sPermission') == 'tokens' && $oEvent->get('sCRUD') == 'read') {
+                    $oEvent->set('bPermission', true);
+                }
+            }
+        }
+    }
 
     public function newDirectRequest()
     {
@@ -90,14 +115,14 @@ class DirectCSVExport extends PluginBase {
                 $oFormattingOptions = new FormattingOptions();
                 $oFormattingOptions->responseMinRecord = 1;
                 $oFormattingOptions->responseMaxRecord = $maxId;
-		$aFields = array_keys(createFieldMap($survey, 'full', true, false, $survey->language));
-		$aTokenFields = [];
-		if ($survey->hasTokensTable) {
-			$aTokenFields = array('tid','participant_id','firstname','lastname','email','emailstatus','language','blacklisted','sent','remindersent','remindercount','completed','usesleft','validfrom','validuntil','mpid');
-	                foreach($survey->tokenAttributes as $key => $value) {
-	                    $aTokenFields[] = $key;
-	                }
-		}
+                $aFields = array_keys(createFieldMap($survey, 'full', true, false, $survey->language));
+                $aTokenFields = [];
+                if ($survey->hasTokensTable) {
+                    $aTokenFields = array('tid','participant_id','firstname','lastname','email','emailstatus','language','blacklisted','sent','remindersent','remindercount','completed','usesleft','validfrom','validuntil','mpid');
+                    foreach($survey->tokenAttributes as $key => $value) {
+                        $aTokenFields[] = $key;
+                    }
+                }
                 $oFormattingOptions->selectedColumns = array_merge($aFields,$aTokenFields);
                 $oFormattingOptions->responseCompletionState = 'all';
                 $oFormattingOptions->headingFormat = 'full';
