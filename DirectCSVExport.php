@@ -60,6 +60,7 @@ class DirectCSVExport extends PluginBase {
         $oEvent = $this->getEvent();
         $sSurveyId = Yii::app()->request->getQuery('surveyId');
         $sAPIKey = Yii::app()->request->getQuery('APIKey');
+        $surveyidExists = false;
 
         if (!empty($sSurveyId)) {
             $iSurveyId = intval($sSurveyId);
@@ -88,14 +89,15 @@ class DirectCSVExport extends PluginBase {
 
 
         $sSurveyId = Yii::app()->request->getQuery('surveyId');
-        $sAPIKey = Yii::app()->request->getQuery('APIKey');
+	$sAPIKey = Yii::app()->request->getQuery('APIKey');
+	$surveyidExists = false;
 
         if (!empty($sSurveyId)) {
             $iSurveyId = intval($sSurveyId);
             $surveyidExists = Survey::model()->findByPk($iSurveyId);
         }
 
-        if (!isset($surveyidExists)) {
+        if ($surveyidExists !== false) {
             die("Survey does not exist");
         }
 
